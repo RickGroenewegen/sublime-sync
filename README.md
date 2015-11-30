@@ -28,7 +28,7 @@ Rick Groenewegen
 rick@aanzee.nl
 
 ## License
-The MIT License (MIT)
+The ISC License (ISC)
 
 Copyright (c) 2015 Rick Groenewegen
 
