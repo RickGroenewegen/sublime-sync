@@ -21,14 +21,16 @@ console.log('Watching directory: ' + process.cwd());
 try {
   content = fs.readFileSync('./sftp-config.json','utf-8');
 } catch(e) {
-  throw "sftp-config.json not found!"
+  console.log(colors.red('Error: sftp-config.json not found!'));
+  process.exit();
 }
 
 // Try to parse sftp-config.json file
 try{
   var config = RJSON.parse(content);
 } catch(e) {
-  throw 'Unable to parse sftp-config.json';
+  console.log(colors.red('Error: Unable to parse sftp-config.json!'));
+  process.exit();
 }
 
 var ignorePatterns = config.ignore_regexes;
