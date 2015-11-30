@@ -1,6 +1,6 @@
 # sublime-sync
 
-A command-line watcher / sync tool for the Sublime SFT plugin (https://wbond.net/sublime_packages/sftp). 
+A command-line watcher / sync tool for the Sublime SFTP plugin (https://wbond.net/sublime_packages/sftp). 
 It monitors your working directory and automatically syncs modified files with the remote SFTP directory.
  
 ## Installation
