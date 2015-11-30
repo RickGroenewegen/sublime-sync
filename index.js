@@ -15,7 +15,6 @@ var scanInterval = 1000;
 util.print("\u001b[2J\u001b[0;0H");
 
 console.log(colors.blue('Sublime SFTP directory watcher v' + settings.version));
-console.log('Watching directory: ' + process.cwd());
 
 // Try to read sftp-config.json file
 try {
@@ -32,6 +31,8 @@ try{
   console.log(colors.red('Error: Unable to parse sftp-config.json!'));
   process.exit();
 }
+
+console.log('Watching directory: ' + process.cwd());
 
 var ignorePatterns = config.ignore_regexes;
 
