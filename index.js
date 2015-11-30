@@ -4,7 +4,6 @@ var watch = require('node-watch');
 var fs = require('fs');
 //var config = require('./sftp-config.json');
 var SFTPS = require('sftps');
-var strip = require('strip-comments');
 var RJSON = require('relaxed-json');
 var util = require('util');
 var colors = require('colors');
@@ -18,7 +17,7 @@ console.log('Watching directory: ' + process.cwd());
 
 // Try to read sftp-config.json file
 try {
-  content = strip(fs.readFileSync('./sftp-config.json','utf-8'));
+  content = fs.readFileSync('./sftp-config.json','utf-8');
 } catch(e) {
   throw "sftp-config.json not found!"
 }
