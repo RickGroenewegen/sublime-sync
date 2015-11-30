@@ -1,10 +1,14 @@
 {
   "name": "sublime-sync",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "A directory watcher / sync tool for the Sublime SFTP plugin",
   "main": "index.js",
   "readme": "README.md",
   "preferGlobal": "true",
+  "repository" : { 
+    "type" : "git"
+  , "url" : "https://github.com/RickGroenewegen/sublime-sync.git"
+  },
   "bin": {
     "sublime-sync": "index.js"
   },

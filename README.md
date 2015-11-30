@@ -7,14 +7,14 @@ It monitors your working directory and automatically syncs modified files with t
 Install with npm for Node.js:
 
 ```
-sh$ npm install sublime-sync -g
+npm install sublime-sync -g
 ```
 
 ## Usage
  
 You can start the watcher by going to the directory you want to watch and call 'sublime-sync':
 
-```sh
+```
 cd ~/myDir
 sublime-sync
 ```
