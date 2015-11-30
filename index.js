@@ -7,11 +7,12 @@ var RJSON = require('relaxed-json');
 var util = require('util');
 var colors = require('colors');
 var content = '';
+var settings = require('./package.json');
 
 // Clear console screen
 util.print("\u001b[2J\u001b[0;0H");
 
-console.log(colors.blue('Sublime SFTP directory watcher ' + process.version));
+console.log(colors.blue('Sublime SFTP directory watcher v' + settings.version));
 console.log('Watching directory: ' + process.cwd());
 
 // Try to read sftp-config.json file
@@ -53,9 +54,31 @@ watch('.', function(filename) {
 
   // Upload if it doesn't match the ignorePatterns
   if(!matches) {
+    
+    var exists = fs.existsSync('./' + filename);
     var destination = config.remote_path + '/' + filename;
-    console.log('Change detected in ' + filename + '. Uploading to -> ' + destination);
-    sftp.put('.' + filename, config.remote_path + filename)
+     
+    if(exists) {
+
+      console.log('Change detected in ' + filename + '. Uploaded to -> ' + destination);
+      
+      sftp.put('.' + filename, destination).exec(function(err,res){
+        if(err) {
+          console.log(colors.red('Error uploading file!'));
+        } 
+      });
+      
+    } else {
+
+      console.log('Delete detected on ' + filename + '. Deleting server file -> ' + destination);
+
+      sftp.rm(destination).exec(function(err,res){
+        if(err) {
+          console.log(colors.red('Error deleting file!'));
+        }
+      });
+    }
+
   }
 
 });
