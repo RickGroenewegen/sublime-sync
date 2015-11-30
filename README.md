@@ -4,9 +4,7 @@ A command-line watcher / sync tool for the Sublime SFT plugin (https://wbond.net
 It monitors your working directory and automatically syncs modified files with the remote SFTP directory.
  
 ## Installation
-Install with npm for Node.js. sublime-sync required sshpass to allow password verification without a command prompot.
-
-This is [an example](http://www.cyberciti.biz/faq/noninteractive-shell-script-ssh-password-provider// "Title") inline link.
+Install with npm for Node.js. sublime-sync required [sshpass](http://www.cyberciti.biz/faq/noninteractive-shell-script-ssh-password-provider) to allow password verification without a command prompot.
 
 ```
 brew install https://raw.githubusercontent.com/kadwanev/bigboybrew/master/Library/Formula/sshpass.rb
