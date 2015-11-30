@@ -2,7 +2,6 @@
 
 var watch = require('node-watch');
 var fs = require('fs');
-//var config = require('./sftp-config.json');
 var SFTPS = require('sftps');
 var RJSON = require('relaxed-json');
 var util = require('util');
