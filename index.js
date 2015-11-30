@@ -8,6 +8,8 @@ var util = require('util');
 var colors = require('colors');
 var content = '';
 var settings = require('./package.json');
+var jobs = [];
+var scanInterval = 1000;
 
 // Clear console screen
 util.print("\u001b[2J\u001b[0;0H");
@@ -39,6 +41,21 @@ var sftp = new SFTPS({
   port: 22 // optional 
 });
 
+// Create scan function that runs & empties the SFTP queue every second
+var scan = function() { 
+  if(sftp.cmds.length > 0) {
+    sftp.exec(function(err,res) {
+      if(err) throw err;
+      if(res.data) {
+        var numberOfItems = res.data.split('\n').length - 1;
+        console.log(colors.green('Succesfully uploaded ' + numberOfItems + ' file(s)'));
+      }
+    });
+  }
+  setTimeout(scan, scanInterval);
+};
+setTimeout(scan, scanInterval);
+
 // Initiate the watcher
 watch('.', function(filename) {
   
@@ -59,24 +76,11 @@ watch('.', function(filename) {
     var destination = config.remote_path + '/' + filename;
      
     if(exists) {
-
-      console.log('Change detected in ' + filename + '. Uploaded to -> ' + destination);
-      
-      sftp.put('.' + filename, destination).exec(function(err,res){
-        if(err) {
-          console.log(colors.red('Error uploading file!'));
-        } 
-      });
-      
+      console.log('Change detected in ' + filename + '. Uploading to -> ' + destination);
+      sftp.put('./' + filename, destination);
     } else {
-
       console.log('Delete detected on ' + filename + '. Deleting server file -> ' + destination);
-
-      sftp.rm(destination).exec(function(err,res){
-        if(err) {
-          console.log(colors.red('Error deleting file!'));
-        }
-      });
+      sftp.rm(destination);
     }
 
   }
