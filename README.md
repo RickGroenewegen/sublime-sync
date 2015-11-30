@@ -1,8 +1,11 @@
 # sublime-sync
 
 A command-line watcher / sync tool for the Sublime SFTP plugin (https://wbond.net/sublime_packages/sftp). 
-It monitors your working directory and automatically syncs modified files with the remote SFTP directory.
- 
+
+The SFTP plugin automatically uploads if you have the 'upload_on_save' setting on in your sftp-config.json. However, if files are modified externally it does not synchronize those files. This module does the same as the 'upload_on_save' setting and also monitors recursively for external changes (Git pulls, build tools etc).
+
+If changes are detected the files are automatically synchronized with your remote SFTP directory. It still uses your sftp-config.json to retrieve the SFTP server information and respects the ignore rules set in 'ignore_regexes'.
+
 ## Installation
 Install with npm for Node.js. sublime-sync required [sshpass](http://www.cyberciti.biz/faq/noninteractive-shell-script-ssh-password-provider) to allow password verification without a command prompot.
 
