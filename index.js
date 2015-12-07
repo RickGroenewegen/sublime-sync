@@ -164,6 +164,7 @@ if(fs.existsSync(configLocation)) {
     username = result.username;
     password = result.password;
     remotePath = result.remotePath;
+    ignorePatterns = obj.ignore_regexes;
 
     fs.writeFileSync('./sftp-config.json',JSON.stringify(obj,null,4),{ encoding: 'utf8'});
 

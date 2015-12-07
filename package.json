@@ -17,7 +17,8 @@
     "node-watch": "^0.3.4",
     "prompt": "^0.2.14",
     "relaxed-json": "^1.0.0",
-    "sftps": "^0.2.8"
+    "sftps": "^0.2.8",
+    "watchr": "^2.4.13"
   },
   "keywords": [
     "sublime",
