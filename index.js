@@ -80,6 +80,10 @@ var start = function() {
   });
 }
 
+var writeConfig = function(obj) {
+  fs.writeFileSync('./sftp-config.json',JSON.stringify(obj,null,4),{ encoding: 'utf8'});
+}
+
 // Clear console screen
 util.print("\u001b[2J\u001b[0;0H");
 
@@ -151,7 +155,6 @@ if(fs.existsSync(configLocation)) {
     var obj = {
       host: result.host,
       user: result.username,
-     // password: result.password,
       remote_path: result.remotePath,
       ignore_regexes: [
           "\\.sublime-(project|workspace)", "sftp-config.json","node_modules","WEB-INF","web.config","bin",
@@ -166,17 +169,18 @@ if(fs.existsSync(configLocation)) {
     remotePath = result.remotePath;
     ignorePatterns = obj.ignore_regexes;
 
-    fs.writeFileSync('./sftp-config.json',JSON.stringify(obj,null,4),{ encoding: 'utf8'});
-
     // If it's OSX: Set password in the kechain stead of the file
     if(isMac) {
       var serviceName = 'sublime-sync-' + host + '-' + username;
       console.log('Storing password in keychain under key: ' + serviceName);
       keychain.setPassword({ account: 'foo', service: serviceName, password: password }, function(err) {
         if(err) throw err;
+        writeConfig(obj);
         start();
       });
     } else {
+      obj["password"] = result.password;
+      writeConfig(obj);
       start();
     }
   
