@@ -37,8 +37,10 @@ var start = function() {
   var scan = function() { 
     if(sftp.cmds.length > 0) {
       sftp.exec(function(err,res) {
-        if(err) throw err;
-        if(res.data) {
+        if(err) {
+          console.log(colors.red(err));
+        }
+        else if(res.data) {
           var numberOfItems = res.data.split('\n').length - 1;
           console.log(colors.green('Succesfully uploaded ' + numberOfItems + ' file(s)'));
         }

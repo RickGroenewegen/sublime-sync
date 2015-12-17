@@ -1,6 +1,6 @@
 {
   "name": "sublime-sync",
-  "version": "0.1.4",
+  "version": "0.1.6",
   "description": "A directory watcher / sync tool for the Sublime SFTP plugin",
   "main": "index.js",
   "preferGlobal": "true",
@@ -25,9 +25,13 @@
     "sftp",
     "sync",
     "ftp",
-    "synchronize",
     "watch",
-    "watcher"
+    "watcher",
+    "synchronize",
+    "synchronise",
+    "sync",
+    "files",
+    "folders"    
   ],
   "author": "Rick Groenewegen <rick@aanzee.nl> (http://www.rickgroenewegen.nl)",
   "license": "ISC"
