@@ -21,6 +21,11 @@ var password = '';
 var remotePath = '';
 var isMac = /^darwin/.test(process.platform);
 
+String.prototype.replaceAll = function(search, replacement) {
+    var target = this;
+    return target.replace(new RegExp(search, 'g'), replacement);
+};
+
 var start = function() {
 
   console.log('Watching directory: ' + process.cwd());
@@ -32,6 +37,28 @@ var start = function() {
     password: password, // required 
     port: 22 // optional 
   });
+
+  var syncDirectory = function(localFilename,destination) {
+    var filename = '';
+    var isDirectory = false;
+
+    destination = destination.replace(/\\/g,"/");
+    destination = destination.replace(/\/\/+/g, '/');
+
+    sftp.raw('mkdir ' + destination);
+    var dirList = fs.readdirSync('./' + localFilename);
+
+    for(var i=0;i<dirList.length;i++) {
+      filename = dirList[i];      
+      isDirectory = fs.lstatSync(localFilename + '/' + filename).isDirectory();
+      if(isDirectory) {
+        syncDirectory(localFilename + '/' + filename,destination)
+      } else {
+        console.log('Uploading to -> ' + destination);
+        sftp.put(localFilename + '/' + filename, destination);
+      }
+    }   
+  }
 
   // Create scan function that runs & empties the SFTP queue every second
   var scan = function() { 
@@ -50,9 +77,10 @@ var start = function() {
   };
   setTimeout(scan, scanInterval);
 
+
   // Initiate the watcher
   watch('.', function(filename) {
-    
+        
     // See if it matches 'ignore_regexes'
     var matches = false;
     for(var i=0;i<ignorePatterns.length;i++) {
@@ -65,16 +93,29 @@ var start = function() {
 
     // Upload if it doesn't match the ignorePatterns
     if(!matches) {
-      
+
+      console.log('Change detected: ' + colors.magenta(filename));
+
+      var isDirectory = false;      
       var exists = fs.existsSync('./' + filename);
       var destination = remotePath + '/' + filename;
-       
+
+      destination = destination.replace(/\\/g,'/');
+      destination = destination.replace(/\/\/+/g, '/');
+
       if(exists) {
-        console.log('Change detected in ' + filename + '. Uploading to -> ' + destination);
-        sftp.put('./' + filename, destination);
+        console.log('Uploading to -> ' + destination);
+        isDirectory = fs.lstatSync('./' + filename).isDirectory();
+        if(isDirectory) {
+          syncDirectory(filename,destination);
+        } else {
+          sftp.put('./' + filename, destination);
+        }        
       } else {
         console.log('Delete detected on ' + filename + '. Deleting server file -> ' + destination);
         sftp.rm(destination);
+        sftp.raw('rm '+ destination + '/*');
+        sftp.raw('rmdir ' + destination);
       }
 
     }
@@ -87,9 +128,9 @@ var writeConfig = function(obj) {
 }
 
 // Clear console screen
-util.print("\u001b[2J\u001b[0;0H");
+console.log("\u001b[2J\u001b[0;0H");
 
-console.log(colors.blue('Sublime SFTP directory watcher v' + settings.version));
+console.log(colors.magenta('Sublime SFTP directory watcher v' + settings.version));
 
 // Try to read sftp-config.json file
 if(fs.existsSync(configLocation)) {
