@@ -18,6 +18,7 @@ var ignorePatterns = '';
 var host = '';
 var username = '';
 var password = '';
+var port = 22;
 var remotePath = '';
 var isMac = /^darwin/.test(process.platform);
 
@@ -27,14 +28,14 @@ var start = function() {
 
   // Create SFTP connection
   var sftp = new SFTPS({
-    host: host, // required 
-    username: username, // required 
-    password: password, // required 
-    port: 22 // optional 
+    host: host, // required
+    username: username, // required
+    password: password, // required
+    port: port // optional
   });
 
   // Create scan function that runs & empties the SFTP queue every second
-  var scan = function() { 
+  var scan = function() {
     if(sftp.cmds.length > 0) {
       sftp.exec(function(err,res) {
         if(err) {
@@ -52,7 +53,7 @@ var start = function() {
 
   // Initiate the watcher
   watch('.', function(filename) {
-    
+
     // See if it matches 'ignore_regexes'
     var matches = false;
     for(var i=0;i<ignorePatterns.length;i++) {
@@ -65,10 +66,10 @@ var start = function() {
 
     // Upload if it doesn't match the ignorePatterns
     if(!matches) {
-      
+
       var exists = fs.existsSync('./' + filename);
       var destination = remotePath + '/' + filename;
-       
+
       if(exists) {
         console.log('Change detected in ' + filename + '. Uploading to -> ' + destination);
         sftp.put('./' + filename, destination);
@@ -102,7 +103,12 @@ if(fs.existsSync(configLocation)) {
     password = config.password;
     ignorePatterns = config.ignore_regexes;
     remotePath = config.remote_path;
-    
+
+    // If port is set in config file (Like in Sublime) then use that, default is 22
+    if (config.port) {
+      port = config.port;
+    }
+
     // If password is set in config file (Like in Sublime) then use that
     if(config.password) {
       password = config.password;
@@ -119,7 +125,7 @@ if(fs.existsSync(configLocation)) {
       console.log(colors.red('Error: Unable to retrieve passwrod from sftp-config.json or keychain!'));
       process.exit();
     }
-    
+
   } catch(e) {
     console.log(colors.red('Error: Unable to parse sftp-config.json!'));
     process.exit();
@@ -153,7 +159,7 @@ if(fs.existsSync(configLocation)) {
   };
 
   prompt.get(schema, function (err, result) {
-   
+
     var obj = {
       host: result.host,
       user: result.username,
@@ -185,7 +191,7 @@ if(fs.existsSync(configLocation)) {
       writeConfig(obj);
       start();
     }
-  
+
   });
 
 }
