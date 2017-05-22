@@ -9,7 +9,7 @@ If changes are detected the files are automatically synchronized with your remot
 If no sftp-config.json was found the user will be prompted to enter host / credential information. sublime-sync will then create a sftp-config.json manually. When using OS X the password will be stored in the keychain instead of sftp-config.json
 
 ## Installation
-Install with npm for Node.js. sublime-sync required [sshpass](http://www.cyberciti.biz/faq/noninteractive-shell-script-ssh-password-provider) to allow password verification without a command prompot.
+Install with npm for Node.js. sublime-sync requires [sshpass](http://www.cyberciti.biz/faq/noninteractive-shell-script-ssh-password-provider) to allow password verification without a command prompt.
 
 ```
 brew install https://raw.githubusercontent.com/kadwanev/bigboybrew/master/Library/Formula/sshpass.rb
