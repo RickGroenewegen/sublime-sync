@@ -18,6 +18,7 @@ var ignorePatterns = '';
 var host = '';
 var username = '';
 var password = '';
+var sshOptions = {};
 var port = 22;
 var remotePath = '';
 var isMac = /^darwin/.test(process.platform);
@@ -31,13 +32,23 @@ var start = function() {
 
   console.log('Watching directory: ' + process.cwd());
 
-  // Create SFTP connection
-  var sftp = new SFTPS({
+  var options = {
     host: host, // required
     username: username, // required
-    password: password, // required
-    port: port // optional
-  });
+    port: port,
+    autoConfirm: true
+  }
+
+  if(password && password.length > 0) {
+    options['password'] = password;
+  } 
+
+  if(Object.keys(sshOptions).length > 0) {
+    options['sshOptions'] = sshOptions;
+  }
+
+  // Create SFTP connection
+  var sftp = new SFTPS(options);
 
   var syncDirectory = function(localFilename,destination) {
     var filename = '';
@@ -139,9 +150,14 @@ if(fs.existsSync(configLocation)) {
   // Try to parse sftp-config.json file
   try{
     var config = RJSON.parse(content);
+
     host = config.host;
     username = config.user;
-    password = config.password;
+
+    if(config.password) {
+      password = config.password;
+    }
+
     ignorePatterns = config.ignore_regexes;
     remotePath = config.remote_path;
 
@@ -153,6 +169,17 @@ if(fs.existsSync(configLocation)) {
     // If password is set in config file (Like in Sublime) then use that
     if(config.password) {
       password = config.password;
+      start();
+    }
+
+    // Look for SSH options and read all the SFTP flags from the config
+    else if(config.sftp_flags) {
+      config.sftp_flags.forEach(function(flag) {
+        flag = flag.replace('-o ','');
+        var flagName = flag.split('=')[0];
+        var flagValue = flag.split('=')[1];
+        sshOptions[flagName] = flagValue;
+      });
       start();
     // Otherwise on Mac check the keychain for the password
     } else if(isMac) {
