@@ -27,7 +27,7 @@ sublime-sync
 
 ## SSH keys
 
-Using SSH keys is supported, but only by configuring the path to the PEM file in your sftp-config.json:
+Using SSH keys is supported by configuring the path to the PEM file in your sftp-config.json:
 
 ```
 "sftp_flags": ["-o IdentityFile=/path/to/your.pem"],
