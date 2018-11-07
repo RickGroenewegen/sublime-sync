@@ -91,7 +91,23 @@ var start = function() {
 
 
   // Initiate the watcher
-  watch('.', function(filename) {
+  watch('.', {
+    filter: function(filename) {
+      // Don't watch file if it matches 'ignore_regexes'
+      var matches = false;
+      for(var i = 0; i < ignorePatterns.length; i++) {
+        var res = filename.match(ignorePatterns[i]);
+        if (res) {
+          matches = true;
+          break;
+        }
+      }
+      if (matches) {
+        return false;
+      }
+      return true;
+    }
+  }, function(filename) {
 
     // See if it matches 'ignore_regexes'
     var matches = false;
