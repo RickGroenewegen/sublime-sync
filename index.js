@@ -41,7 +41,7 @@ var start = function() {
 
   if(password && password.length > 0) {
     options['password'] = password;
-  } 
+  }
 
   if(Object.keys(sshOptions).length > 0) {
     options['sshOptions'] = sshOptions;
@@ -61,7 +61,7 @@ var start = function() {
     var dirList = fs.readdirSync('./' + localFilename);
 
     for(var i=0;i<dirList.length;i++) {
-      filename = dirList[i];      
+      filename = dirList[i];
       isDirectory = fs.lstatSync(localFilename + '/' + filename).isDirectory();
       if(isDirectory) {
         syncDirectory(localFilename + '/' + filename,destination)
@@ -69,7 +69,7 @@ var start = function() {
         console.log('Uploading to -> ' + destination);
         sftp.put(localFilename + '/' + filename, destination);
       }
-    }   
+    }
   }
 
   // Create scan function that runs & empties the SFTP queue every second
@@ -91,7 +91,23 @@ var start = function() {
 
 
   // Initiate the watcher
-  watch('.', function(filename) {
+  watch('.', {
+    filter: function(filename) {
+      // Don't watch file if it matches 'ignore_regexes'
+      var matches = false;
+      for(var i = 0; i < ignorePatterns.length; i++) {
+        var res = filename.match(ignorePatterns[i]);
+        if (res) {
+          matches = true;
+          break;
+        }
+      }
+      if (matches) {
+        return false;
+      }
+      return true;
+    }
+  }, function(filename) {
 
     // See if it matches 'ignore_regexes'
     var matches = false;
@@ -108,7 +124,7 @@ var start = function() {
 
       console.log('Change detected: ' + colors.magenta(filename));
 
-      var isDirectory = false;      
+      var isDirectory = false;
       var exists = fs.existsSync('./' + filename);
       var destination = remotePath + '/' + filename;
 
@@ -122,7 +138,7 @@ var start = function() {
           syncDirectory(filename,destination);
         } else {
           sftp.put('./' + filename, destination);
-        }        
+        }
       } else {
         console.log('Delete detected on ' + filename + '. Deleting server file -> ' + destination);
         sftp.rm(destination);
